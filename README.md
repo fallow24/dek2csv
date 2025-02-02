@@ -16,6 +16,7 @@ Export from MTGO:
 - Go to your MTGO library.
 - Select one card, then press CTRL+A to select all cards
 - Right click and "Export selected"
+
 Use the script to convert the exported file:
 - Open terminal ("cmd"-program) and navigate to the file ("cd" command)
 - Run the following command (you can choose your own name for export_file)
