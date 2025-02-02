@@ -2,6 +2,8 @@
 
 Import your MTGO library in Archidekt!
 Why? Because MTGO client is poorly optimized and crashes/freezes all the time.
+If you experience any problems feel free to create an [issue](https://github.com/fallow24/dek2csv/issues). 
+If you don't have GitHub, there is also a [reddit post](https://www.reddit.com/r/MTGO/comments/1ieht16/import_mtgo_collection_into_archidekt/) where you can share feedback. 
 
 ## Prerequisits
 You need to install python3 and the requests package.
