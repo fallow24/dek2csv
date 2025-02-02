@@ -70,7 +70,7 @@ def write_to_csv(card_data, csv_file):
     # Open the CSV file for writing
     with open(csv_file, 'w', newline='') as csvfile:
         # Create a CSV writer
-        writer = csv.writer(csvfile, delimiter=' ')  # Set space as the delimiter
+        writer = csv.writer(csvfile, delimiter=',')  # Set space as the delimiter
         
         # Write the header
         writer.writerow(['Quantity', 'Name', 'Scryfall_ID'])
