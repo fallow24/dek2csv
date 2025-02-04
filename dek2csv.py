@@ -20,7 +20,7 @@ def get_scryfall_id(catid):
         # Check if cards were found
         if data['total_cards'] > 0:
             print(f"Response for {catid}: {data['data'][0]['name']}")
-            return data['data'][0]['id']  # Return the Scryfall ID of the first card found
+            return data['data'][0]['id'], data['data'][0]['name']   # Return the Scryfall ID and name of the first card found
     print(f"Scryfall does not response to MTGO ID {catid}")
     return None
 
@@ -48,11 +48,10 @@ def parse_xml(xml_file):
     for card in cards:
         # Read quantity, name, and CatID
         quantity = int(card.attrib.get('Quantity'))
-        name = card.attrib.get('Name')
         catid = card.attrib.get('CatID')
         
-        # Fetch the corresponding Scryfall ID
-        scryfall_id = get_scryfall_id(catid)
+        # Fetch the corresponding Scryfall ID and name
+        scryfall_id, name = get_scryfall_id(catid)
         
         # Add the data to the list
         card_data.append((quantity, name, scryfall_id))
