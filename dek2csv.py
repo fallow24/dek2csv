@@ -3,26 +3,40 @@ import csv
 import argparse
 import requests
 
-def get_scryfall_id(catid):
+def get_scryfall_id(catid, mtgoname):
     """
     Fetch the Scryfall ID corresponding to a given CatID from the Scryfall API.
     
     Args:
         catid (str): The CatID of the card to look up.
+        mtgoname (str): The name of the card on MTGO. Used for backup if catid fails.
     
     Returns:
         str: The corresponding Scryfall ID, or None if not found.
+        str: The name of the card according to Scryfall, or MTGOs name if not found.
     """
     response = requests.get(f'https://api.scryfall.com/cards/search?q=mtgoid:{catid}')
-    
     if response.status_code == 200:
         data = response.json()
         # Check if cards were found
         if data['total_cards'] > 0:
             print(f"Response for {catid}: {data['data'][0]['name']}")
             return data['data'][0]['id'], data['data'][0]['name']   # Return the Scryfall ID and name of the first card found
-    print(f"Scryfall does not response to MTGO ID {catid}")
-    return None
+    elif response.status_code == 404:
+        response = requests.get(f'https://api.scryfall.com/cards/search?q=name:{mtgoname}')
+        data = response.json()
+        if data['object'] == "error":
+            print(f"The card {catid} - {mtgoname} does not exist.")
+            return None, None
+        # Check if cards were found
+        if data['total_cards'] > 0:
+            for card in data['data']:
+                if card['name'] == mtgoname:
+                    print(f"Response for {catid} invalid but identified via name: {card['name']}")
+                    return card['id'], card['name']  
+
+    print(f"Scryfall does neither respond to MTGO ID {catid} nor name {mtgoname}.")
+    return None, mtgoname
 
 def parse_xml(xml_file):
     """
@@ -49,12 +63,14 @@ def parse_xml(xml_file):
         # Read quantity, name, and CatID
         quantity = int(card.attrib.get('Quantity'))
         catid = card.attrib.get('CatID')
-        
+        mtgoname = card.attrib.get('Name')
+
         # Fetch the corresponding Scryfall ID and name
-        scryfall_id, name = get_scryfall_id(catid)
+        scryfall_id, name = get_scryfall_id(catid, mtgoname)
         
         # Add the data to the list
-        card_data.append((quantity, name, scryfall_id))
+        if name != None and scryfall_id != None:
+            card_data.append((quantity, name, scryfall_id))
     
     return card_data
 
